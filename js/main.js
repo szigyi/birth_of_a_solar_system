@@ -1,7 +1,7 @@
-const Mover = (name, mass, x, y) => {
+const Mover = (name, mass, x, y, velocity, acceleration) => {
   let location = createVector(x, y)
-  let velocity = createVector(0, 0)
-  let acceleration = createVector(0, 0)
+  velocity = velocity || createVector(0, 0)
+  acceleration = acceleration || createVector(0, 0)
 
   return ({
     name: () => name,
@@ -83,7 +83,7 @@ const SolarApp = {
     SolarApp.display(bodies)
 
     if (updatePhysics) SolarApp.update(bodies)
-    SolarApp.checkEdges(bodies)
+    // SolarApp.checkEdges(bodies)
   }
 }
 
@@ -97,7 +97,11 @@ let updatePhysics = false
 function setup() {
   createCanvas(800, 800);
   gravity = 9.8
-  bodies = [Mover('Sun', 0.01, 50, 20), Mover('Earth', 0.05, 260, 260)]
+  bodies = [
+    Mover('Sun', 0.05, width / 2, height / 2),
+    Mover('Mercury', 0.0006, 100, height / 2, createVector(0.1, 0.4)),
+    Mover('Earth', 0.001, 50, height / 2, createVector(0.2, 0.8))
+  ]
 }
 
 function draw() {
