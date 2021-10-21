@@ -21,4 +21,19 @@
   }
 }());
 
+const debugEnabled = false
+
+var info = function (str) {
+  console.info(str)
+}
+var debug = function (str) {
+  if (debugEnabled) console.debug(str)
+}
+var warn = function (str) {
+  console.warn(str)
+}
+var error = function (str) {
+  console.error(str)
+}
+
 // Place any jQuery/helper plugins in here.
