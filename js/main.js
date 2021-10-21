@@ -90,8 +90,8 @@ const SolarApp = {
 let bodies;
 let gravity;
 
-const visualDebugEnabled = true
-const debugEnabled = false
+let visualDebugEnabled = true
+let debugEnabled = false
 let updatePhysics = false
 
 function setup() {
@@ -107,7 +107,11 @@ function draw() {
 }
 
 function keyPressed() {
-  if (keyCode === 32) { // spacebar
+  if (keyCode === 32) {        // spacebar
     updatePhysics = !updatePhysics;
+  } else if (keyCode === 68) { // char d
+    debugEnabled = !debugEnabled
+  } else if (keyCode === 86) { // char v
+    visualDebugEnabled = !visualDebugEnabled
   }
 }
