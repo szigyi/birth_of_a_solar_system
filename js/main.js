@@ -23,6 +23,8 @@ const Mover = (name, mass, x, y) => {
       stroke(0)
       fill(175)
       ellipse(location.x, location.y, mass * 1000, mass * 1000)
+      const visualVelocity = p5.Vector.add(location, p5.Vector.mult(velocity, 100))
+      line(location.x, location.y, visualVelocity.x, visualVelocity.y)
     },
 
     checkEdges: () => {
