@@ -47,38 +47,37 @@ const Mover = (name, mass, x, y) => {
   })
 };
 
-function applyGravity(gravity, bodies) {
-  bodies.forEach(body => {
-    bodies.forEach(effectedBody => {
-      if (body.name !== effectedBody.name) {
-        const m1 = body.mass()
-        const m2 = effectedBody.mass()
-        debug('m1:', m1)
-        debug('m2:', m2)
-        const r = body.location().dist(effectedBody.location())
-        debug('r:', r)
-        const force = gravity * ((m1 * m2) / (r * r))
-        debug('force:', force)
-        const vectorForce = p5.Vector.sub(body.location(), effectedBody.location()).mult(force)
-        debug('vectorForce:', vectorForce)
-        effectedBody.applyForce(vectorForce)
-      }
+const SolarApp = {
+  update: (bodies) => bodies.forEach(body => body.update()),
+  display: (bodies) => bodies.forEach(body => body.display()),
+  checkEdges: (bodies) => bodies.forEach(body => body.checkEdges()),
+  applyGravity: (gravity, bodies) => {
+    bodies.forEach(body => {
+      bodies.forEach(effectedBody => {
+        if (body.name !== effectedBody.name) {
+          const m1 = body.mass()
+          const m2 = effectedBody.mass()
+          debug('m1:', m1)
+          debug('m2:', m2)
+          const r = body.location().dist(effectedBody.location())
+          debug('r:', r)
+          const force = gravity * ((m1 * m2) / (r * r))
+          debug('force:', force)
+          const vectorForce = p5.Vector.sub(body.location(), effectedBody.location()).mult(force)
+          debug('vectorForce:', vectorForce)
+          effectedBody.applyForce(vectorForce)
+        }
+      })
     })
-  })
-}
+  },
 
-function update(bodies) {
-  bodies.forEach(body => body.update())
+  draw: (gravity, bodies) => {
+    SolarApp.applyGravity(gravity, bodies)
+    SolarApp.update(bodies)
+    SolarApp.display(bodies)
+    SolarApp.checkEdges(bodies)
+  }
 }
-
-function display(bodies) {
-  bodies.forEach(body => body.display())
-}
-
-function checkEdges(bodies) {
-  bodies.forEach(body => body.checkEdges())
-}
-
 
 let bodies;
 let gravity;
@@ -92,8 +91,5 @@ function setup() {
 function draw() {
   background(220);
 
-  applyGravity(gravity, bodies)
-  update(bodies)
-  display(bodies)
-  checkEdges(bodies)
+  SolarApp.draw(gravity, bodies)
 }
