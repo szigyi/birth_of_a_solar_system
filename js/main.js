@@ -23,8 +23,14 @@ const Mover = (name, mass, x, y) => {
       stroke(0)
       fill(175)
       ellipse(location.x, location.y, mass * 1000, mass * 1000)
-      const visualVelocity = p5.Vector.add(location, p5.Vector.mult(velocity, 100))
-      line(location.x, location.y, visualVelocity.x, visualVelocity.y)
+      if (visualDebugEnabled) {
+        stroke(0, 0, 255)
+        const visualVelocity = p5.Vector.add(location, p5.Vector.mult(velocity, 100))
+        line(location.x, location.y, visualVelocity.x, visualVelocity.y)
+        stroke(255, 0, 0)
+        const visualAcceleration = p5.Vector.add(location, p5.Vector.mult(acceleration, 5000))
+        line(location.x, location.y, visualAcceleration.x, visualAcceleration.y)
+      }
     },
 
     checkEdges: () => {
@@ -71,16 +77,22 @@ const SolarApp = {
     })
   },
 
-  draw: (gravity, bodies) => {
-    SolarApp.applyGravity(gravity, bodies)
-    SolarApp.update(bodies)
+  draw: (gravity, bodies, updatePhysics) => {
+    if (updatePhysics) SolarApp.applyGravity(gravity, bodies)
+
     SolarApp.display(bodies)
+
+    if (updatePhysics) SolarApp.update(bodies)
     SolarApp.checkEdges(bodies)
   }
 }
 
 let bodies;
 let gravity;
+
+const visualDebugEnabled = true
+const debugEnabled = false
+let updatePhysics = false
 
 function setup() {
   createCanvas(800, 800);
@@ -91,5 +103,11 @@ function setup() {
 function draw() {
   background(220);
 
-  SolarApp.draw(gravity, bodies)
+  SolarApp.draw(gravity, bodies, updatePhysics)
+}
+
+function keyPressed() {
+  if (keyCode === 32) { // spacebar
+    updatePhysics = !updatePhysics;
+  }
 }
