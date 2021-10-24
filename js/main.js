@@ -1,15 +1,20 @@
-const Mover = (name, mass, x, y, velocity, acceleration) => {
-  let location = createVector(x, y)
+const Mover = (name, earthMass, location, velocity, acceleration) => {
+  location = location || createVector(0, 0)
   velocity = velocity || createVector(0, 0)
   acceleration = acceleration || createVector(0, 0)
+  let visualSize;
+  if (earthMass > 100)
+    visualSize = 0.0002
+  else
+    visualSize = 10
 
   return ({
     name: () => name,
     location: () => location,
-    mass: () => mass,
+    mass: () => earthMass,
 
     applyForce: (force) => {
-      force.div(mass)
+      force.div(earthMass)
       acceleration.add(force)
     },
 
@@ -22,13 +27,13 @@ const Mover = (name, mass, x, y, velocity, acceleration) => {
     display: () => {
       stroke(0)
       fill(175)
-      ellipse(location.x, location.y, mass * 1000, mass * 1000)
+      ellipse(location.x, location.y, earthMass * visualSize, earthMass * visualSize)
       if (visualDebugEnabled) {
         stroke(0, 0, 255)
         const visualVelocity = p5.Vector.add(location, p5.Vector.mult(velocity, 100))
         line(location.x, location.y, visualVelocity.x, visualVelocity.y)
         stroke(255, 0, 0)
-        const visualAcceleration = p5.Vector.add(location, p5.Vector.mult(acceleration, 5000))
+        const visualAcceleration = p5.Vector.add(location, p5.Vector.mult(acceleration, 1000))
         line(location.x, location.y, visualAcceleration.x, visualAcceleration.y)
       }
     },
@@ -66,8 +71,9 @@ const SolarApp = {
           debug('m1:', m1)
           debug('m2:', m2)
           const r = body.location().dist(effectedBody.location())
-          debug('r:', r)
-          const force = gravity * ((m1 * m2) / (r * r))
+          const scaledR = r * compactingScale
+          debug('AU:', scaledR)
+          const force = gravity * ((m1 * m2) / (scaledR * scaledR))
           debug('force:', force)
           const vectorForce = p5.Vector.sub(body.location(), effectedBody.location()).mult(force)
           debug('vectorForce:', vectorForce)
@@ -87,20 +93,38 @@ const SolarApp = {
   }
 }
 
+function startingLocation(au, angle) {
+  const centre = width / 2
+  const distance = centre - auToDistance(au)
+  return createVector(distance, height / 2)
+}
+
+function startingVelocity(kms) {
+  const scaled = kms * 0.01
+  return createVector(scaled / 2, scaled / 2)
+}
+
+function auToDistance(au) {
+  return au * 200
+}
+
 let bodies;
 let gravity;
+const compactingScale = 6000
 
 let visualDebugEnabled = true
 let debugEnabled = false
 let updatePhysics = false
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(1400, 800);
   gravity = 9.8
   bodies = [
-    Mover('Sun', 0.05, width / 2, height / 2),
-    Mover('Mercury', 0.0006, 100, height / 2, createVector(0.1, 0.4)),
-    Mover('Earth', 0.001, 50, height / 2, createVector(0.2, 0.8))
+    Mover('Sun', 333000, startingLocation(0, 0)),
+    Mover('Mercury', 0.055, startingLocation(0.4), startingVelocity(47.36)),
+    Mover('Venus', 0.815, startingLocation(0.7), startingVelocity(35.2)),
+    Mover('Earth', 1, startingLocation(1), startingVelocity(29.78)),
+    Mover('Mars', 0.107, startingLocation(1.5), startingVelocity(24))
   ]
 }
 
