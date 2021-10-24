@@ -93,12 +93,15 @@ const SolarApp = {
   }
 }
 
+// TODO should follow real time positions... fetch real positions
 function startingLocation(au, angle) {
   const centre = width / 2
   const distance = centre - auToDistance(au)
   return createVector(distance, height / 2)
 }
 
+// angular velocity
+// TODO: Learn more about angular velocity
 function startingVelocity(kms) {
   const scaled = kms * 0.01
   return createVector(scaled / 2, scaled / 2)
@@ -110,7 +113,11 @@ function auToDistance(au) {
 
 let bodies;
 let gravity;
-const compactingScale = 6000
+const compactingScale = 6000 // TODO why compacting scale is not the same as AU to distance conversion's scale?
+// Doesn't it mean that the relative distance is now far from the reality as planets can be
+// closer to the Sun but gravity will not effect them the same way?
+// TODO planet's location that is used to calculate the forces, should be independent from drawing location!!!
+// TODO translate real location to drawing location on the fly instead of scale it during construction
 
 let visualDebugEnabled = true
 let debugEnabled = false
